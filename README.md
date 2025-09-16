@@ -17,7 +17,7 @@ A powerful command-line interface for intelligent document analysis using Vision
 ### From Source
 
 ```bash
-git clone [<repository-url>](https://github.com/phuhoangg/Docia)
+git clone (https://github.com/phuhoangg/Docia)
 cd docia-project
 pip install -e .
 ```
