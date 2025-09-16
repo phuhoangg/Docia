@@ -1,0 +1,26 @@
+# Core dependencies for Docia VisionLM Document Intelligence
+
+# OpenAI Provider (Recommended)
+openai>=1.30.0
+
+# OpenRouter Provider (Alternative)
+openrouter>=0.1.0
+
+# Document Processing
+PyPDF2>=3.0.0
+Pillow>=10.0.0
+
+# Async support
+aiofiles>=23.0.0
+
+# Optional: Better image processing
+# imageio>=2.31.0
+
+# Optional: Advanced PDF processing (if needed)
+# pdfplumber>=0.9.0
+
+# Development dependencies (uncomment for development)
+# pytest>=7.0.0
+# pytest-asyncio>=0.21.0
+# black>=23.0.0
+# flake8>=6.0.0
