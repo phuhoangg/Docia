@@ -17,7 +17,7 @@ A powerful command-line interface for intelligent document analysis using Vision
 ### From Source
 
 ```bash
-git clone (https://github.com/phuhoangg/Docia)
+git clone [https://github.com/phuhoangg/Docia]
 cd docia-project
 pip install -e .
 ```
@@ -35,8 +35,8 @@ Docia uses a `.env` file for configuration. Copy and configure:
 # Example .env file
 DOCIA_PROVIDER=openrouter
 OPENROUTER_API_KEY=your-openrouter-api-key
-DOCIA_MODEL=google/gemini-2.0-flash-exp:free
-DOCIA_VISION_MODEL=moonshotai/kimi-vl-a3b-thinking:free
+DOCIA_MODEL=google/gemini-2.5-flash
+DOCIA_VISION_MODEL=google/gemini-2.5-flash
 DOCIA_STORAGE_PATH=./docia_data
 ```
 
@@ -60,17 +60,23 @@ docia[14:30:28]> exit
 ### Basic Commands
 
 ```bash
+# Add a document
+docia add path/to/document.pdf
+
+# Coversation
+docia
+
 # Show help
 docia --help
+# In a coversation : help + Enter
 
 # Show system statistics
 docia stats
+# stats + Enter
 
 # List all documents
 docia list
-
-# Add a document
-docia add path/to/document.pdf
+# list + Enter
 
 # Add with custom name
 docia add path/to/report.pdf --name "Q3 Financial Report"
