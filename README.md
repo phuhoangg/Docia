@@ -17,7 +17,7 @@ A powerful command-line interface for intelligent document analysis using Vision
 ### From Source
 
 ```bash
-git clone <repository-url>
+git clone [<repository-url>](https://github.com/phuhoangg/Docia)
 cd docia-project
 pip install -e .
 ```
@@ -40,10 +40,7 @@ DOCIA_VISION_MODEL=moonshotai/kimi-vl-a3b-thinking:free
 DOCIA_STORAGE_PATH=./docia_data
 ```
 
-The CLI will automatically load the `.env` file from:
-- Current directory (`./.env`)
-- Project root (`./.env`)
-- Package directory (`./docia/.env`)
+The CLI will automatically load the `.env` file
 
 ## 🎯 Usage
 
@@ -175,7 +172,7 @@ docia-project/
 ## 📚 Documentation
 
 - [CLI Documentation](README_CLI.md) - Detailed CLI usage and examples
-- [Configuration Guide](docia/.env) - Environment configuration options
+- [Configuration Guide](docia/.env.example) - Environment configuration options, create a `.evn` base on `.evn.example`
 
 ## 🤝 Contributing
 
