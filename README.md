@@ -17,8 +17,8 @@ A powerful command-line interface for intelligent document analysis using Vision
 ### From Source
 
 ```bash
-git clone [https://github.com/phuhoangg/Docia]
-cd docia-project
+git clone https://github.com/phuhoangg/Docia
+cd docia
 pip install -e .
 ```
 
@@ -56,7 +56,7 @@ docia
 # In QUERY MODE, you can ask questions directly by typing them
 
 # Example workflow in interactive mode:
-# [ADD] Docia > C:\\Documents\\report.pdf
+# [ADD] Docia > C:\Documents\report.pdf
 # [QUERY] Docia > What is this document about?
 ```
 
@@ -75,20 +75,22 @@ The interactive shell provides:
 # Add a document
 docia add path/to/document.pdf
 
-# Coversation
+# Start interactive shell
 docia
 
-# Show help
-docia --help
-# In a coversation : help + Enter
+# Show help in interactive shell
+/                 # Show command menu
+/add              # Switch to add document mode
+/query            # Switch to query mode
+/list             # List all documents
+/clear            # Clear conversation history
+/exit             # Exit the shell
 
 # Show system statistics
 docia stats
-# stats + Enter
 
 # List all documents
 docia list
-# list + Enter
 
 # Add with custom name
 docia add path/to/report.pdf --name "Q3 Financial Report"
@@ -101,9 +103,6 @@ docia search "financial report" --limit 5
 
 # Remove a document
 docia remove doc_123
-
-# Start interactive shell explicitly
-docia shell
 ```
 
 ### Advanced Query Options
@@ -133,29 +132,83 @@ docia config set --provider openai
 docia config set --storage-path ./my_documents
 ```
 
-## 📁 Project Structure
+## 📊 Progress Tracking
 
+The CLI provides real-time progress tracking for complex queries:
+
+```bash
+$ docia query "Analyze the financial trends and growth patterns"
+🚀 Docia initialized successfully!
+🔍 Querying: Analyze the financial trends and growth patterns
+
+📋 Created analysis plan with 2 tasks
+   1. Extract Financial Data (table)
+   2. Analyze Growth Trends (chart)
+
+🔍 Starting: Extract Financial Data
+📄 Selected pages: [3, 4, 5, 8]
+✅ Completed: Extract Financial Data (4 pages)
+
+🔍 Starting: Analyze Growth Trends
+📄 Selected pages: [6, 7, 10]
+✅ Completed: Analyze Growth Trends (3 pages)
+
+🎯 Analysis Results:
+==================================================
+Based on the analysis of Q3 financial data and growth charts...
+
+📊 Query Information:
+   Processing time: 12.34 seconds
+   Pages analyzed: 7
+   Tasks completed: 2
+   Total iterations: 1
+   Cost: $0.0234
 ```
-docia-project/
-├── docia/              # Main Python package
-│   ├── core/          # Configuration and utilities
-│   ├── models/        # Data models
-│   ├── processors/    # Document processing
-│   ├── storage/       # Knowledge storage
-│   ├── intelligence/   # AI orchestration
-│   ├── integrations/  # AI provider integrations
-│   └── utils/         # Utility functions
-├── cli/               # CLI interface
-│   ├── commands/      # CLI commands
-│   ├── main.py        # Main CLI entry point
-│   └── app.py         # CLI app configuration
-├── docia/             # Package directory with .env file
-├── setup.py           # Package setup
-├── requirements.txt   # Dependencies
-├── README.md          # This file
-├── README_CLI.md      # Detailed CLI documentation
-└── .gitignore         # Git ignore rules
+
+## 📚 Interactive Shell Usage
+
+### Modes
+
+The interactive shell has two modes:
+
+1. **ADD MODE** - For adding documents
+   - Enter file paths directly or drag and drop files
+   - Example: `C:\Documents\report.pdf`
+
+2. **QUERY MODE** - For asking questions about documents
+   - Type questions directly
+   - Example: `What is the main topic of this document?`
+
+### Adding Documents
+
+In ADD MODE, you can add documents by:
+1. Typing the full path to a PDF or image file
+2. Dragging and dropping files onto the terminal window
+
+Example:
 ```
+[ADD] Docia > C:\Users\Documents\financial_report.pdf
+```
+
+After adding documents, you'll automatically switch to QUERY MODE.
+
+### Querying Documents
+
+In QUERY MODE, ask questions directly:
+
+Example:
+```
+[QUERY] Docia > What are the key findings in this report?
+```
+
+The shell will analyze your documents and provide intelligent responses.
+
+### Task Tracking
+
+The interactive shell displays real-time task progress:
+- Current tasks are shown at the top of the screen
+- Task status is updated as processing occurs
+- You can ask questions while tasks are running
 
 ## 🔧 API Keys Setup
 
@@ -180,7 +233,7 @@ docia-project/
 ## 📚 Documentation
 
 - [CLI Documentation](README_CLI.md) - Detailed CLI usage and examples
-- [Configuration Guide](docia/.env.example) - Environment configuration options, create a `.evn` base on `.evn.example`
+- [Configuration Guide](docia/.env.example) - Environment configuration options, create a `.env` base on `.env.example`
 
 ## 🤝 Contributing
 
