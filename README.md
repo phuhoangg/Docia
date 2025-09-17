@@ -17,7 +17,7 @@ A powerful command-line interface for intelligent document analysis using Vision
 ### From Source
 
 ```bash
-git clone <repository-url>
+git clone [https://github.com/phuhoangg/Docia]
 cd docia-project
 pip install -e .
 ```
@@ -35,15 +35,12 @@ Docia uses a `.env` file for configuration. Copy and configure:
 # Example .env file
 DOCIA_PROVIDER=openrouter
 OPENROUTER_API_KEY=your-openrouter-api-key
-DOCIA_MODEL=google/gemini-2.0-flash-exp:free
-DOCIA_VISION_MODEL=moonshotai/kimi-vl-a3b-thinking:free
+DOCIA_MODEL=google/gemini-2.5-flash
+DOCIA_VISION_MODEL=google/gemini-2.5-flash
 DOCIA_STORAGE_PATH=./docia_data
 ```
 
-The CLI will automatically load the `.env` file from:
-- Current directory (`./.env`)
-- Project root (`./.env`)
-- Package directory (`./docia/.env`)
+The CLI will automatically load the `.env` file
 
 ## 🎯 Usage
 
@@ -75,17 +72,23 @@ The interactive shell provides:
 ### Basic Commands
 
 ```bash
+# Add a document
+docia add path/to/document.pdf
+
+# Coversation
+docia
+
 # Show help
 docia --help
+# In a coversation : help + Enter
 
 # Show system statistics
 docia stats
+# stats + Enter
 
 # List all documents
 docia list
-
-# Add a document
-docia add path/to/document.pdf
+# list + Enter
 
 # Add with custom name
 docia add path/to/report.pdf --name "Q3 Financial Report"
@@ -177,7 +180,7 @@ docia-project/
 ## 📚 Documentation
 
 - [CLI Documentation](README_CLI.md) - Detailed CLI usage and examples
-- [Configuration Guide](docia/.env) - Environment configuration options
+- [Configuration Guide](docia/.env.example) - Environment configuration options, create a `.evn` base on `.evn.example`
 
 ## 🤝 Contributing
 
