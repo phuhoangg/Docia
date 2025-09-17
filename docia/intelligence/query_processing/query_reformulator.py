@@ -64,6 +64,10 @@ class QueryReformulator:
                 temperature=0.2
             )
 
+            if response is None:
+                logger.error("Query reformulator received None from provider")
+                raise QueryReformulationError("Provider returned None for query reformulation")
+
             # Parse JSON response
             result = None
             try:

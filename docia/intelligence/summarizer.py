@@ -101,6 +101,10 @@ class PageSummarizer:
                 temperature=0.3
             )
 
+            if summary is None:
+                logger.error("Summarizer received None from provider")
+                return "Failed to generate document summary"
+
             logger.debug(f"Generated document summary: {summary[:50]}...")
             return summary
 

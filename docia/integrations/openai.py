@@ -49,9 +49,14 @@ class OpenAIProvider(BaseProvider):
                 temperature=temperature
             )
             
-            result = response.choices[0].message.content.strip()
+            content = response.choices[0].message.content
+            if content is None:
+                logger.error("OpenAI returned None content for text processing")
+                raise ProviderError("OpenAI returned None content", "openai")
+
+            result = content.strip()
             logger.debug(f"OpenAI text response: {result[:50]}...")
-            
+
             return result
             
         except Exception as e:
@@ -76,9 +81,14 @@ class OpenAIProvider(BaseProvider):
                 temperature=temperature
             )
             
-            result = response.choices[0].message.content.strip()
+            content = response.choices[0].message.content
+            if content is None:
+                logger.error("OpenAI returned None content for multimodal processing")
+                raise ProviderError("OpenAI returned None content", "openai")
+
+            result = content.strip()
             logger.debug(f"OpenAI multimodal response: {result[:50]}...")
-            
+
             return result
             
         except Exception as e:

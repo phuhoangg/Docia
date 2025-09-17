@@ -50,6 +50,11 @@ class Orchestrator:
         storage: BaseStorage,
         config: DociaConfig
     ):
+        if provider is None:
+            raise ValueError("Vision AI provider cannot be None")
+        if storage is None:
+            raise ValueError("Storage backend cannot be None")
+
         self.provider = provider
         self.storage = storage
         self.config = config
@@ -269,6 +274,11 @@ class Orchestrator:
                 task_pages=task_pages
             )
 
+            # Ensure selected_pages is not None
+            if selected_pages is None:
+                logger.warning(f"Page selection returned None for task {task.name}, using empty list")
+                selected_pages = []
+
             logger.info(f"Intelligence selected {len(selected_pages)} pages for task: {task.name}")
 
             # Report page selection
@@ -280,6 +290,11 @@ class Orchestrator:
             analysis = await self._analyze_pages_for_task(
                 task, selected_pages, original_query, conversation_history
             )
+
+            # Ensure analysis is not None
+            if analysis is None:
+                logger.warning(f"Analysis returned None for task {task.name}, using empty string")
+                analysis = ""
 
             # Phase 4: Intelligence Result Construction
             return TaskResult(
@@ -365,6 +380,11 @@ class Orchestrator:
                 max_tokens=600,
                 temperature=0.3
             )
+
+            # Ensure result is not None
+            if result is None:
+                logger.warning(f"Vision AI analysis returned None for task {task.name}")
+                return "Vision AI analysis returned no result"
 
             return result.strip()
 

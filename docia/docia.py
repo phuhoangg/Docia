@@ -73,7 +73,14 @@ class Docia:
             self.storage = storage
 
         # Initialize Vision AI components
-        self.provider = create_provider(config)
+        try:
+            self.provider = create_provider(config)
+            if self.provider is None:
+                raise ValueError("Failed to create Vision AI provider - check configuration")
+        except Exception as e:
+            logger.error(f"Failed to initialize Vision AI provider: {e}")
+            raise ValueError(f"Vision AI provider initialization failed: {e}")
+
         self.summarizer = PageSummarizer(config)
         self.orchestrator = Orchestrator(self.provider, self.storage, config)
         

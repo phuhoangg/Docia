@@ -63,6 +63,10 @@ class PageSelector:
                 temperature=0.1  # Low temperature for consistent selection
             )
 
+            if result is None:
+                logger.error("Page selector received None from provider")
+                raise PageSelectionError("Provider returned None for page selection")
+
             # Parse selection result
             selected_pages = self._parse_page_selection(result, task_pages)
 

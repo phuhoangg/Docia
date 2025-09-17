@@ -156,6 +156,10 @@ class ContextProcessor:
                 temperature=0.3
             )
 
+            if summary is None:
+                logger.error("Context processor received None from provider")
+                raise ContextProcessingError("Provider returned None for conversation summarization")
+
             return summary.strip()
 
         except Exception as e:

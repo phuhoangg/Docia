@@ -65,6 +65,10 @@ class ResponseSynthesizer:
                 temperature=0.2  # Low temperature for consistent synthesis
             )
 
+            if result is None:
+                logger.error("Synthesizer received None from provider")
+                return "I encountered an issue while synthesizing the response. Please try again."
+
             logger.info("Successfully synthesized final response")
             return result.strip()
 

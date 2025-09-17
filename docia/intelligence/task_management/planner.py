@@ -80,6 +80,10 @@ class Planner:
                 temperature=0.3
             )
 
+            if result is None:
+                logger.error("Planner received None from provider")
+                raise TaskPlanningError("Provider returned None for initial task planning")
+
             # Parse and create task plan
             task_plan = self._parse_initial_plan(result, query, documents)
 
@@ -154,6 +158,10 @@ class Planner:
                 max_tokens=8192,
                 temperature=0.3
             )
+
+            if result is None:
+                logger.error("Planner received None from provider for plan update")
+                raise TaskPlanningError("Provider returned None for plan update")
 
             # Apply plan updates
             updated_plan = self._apply_plan_updates(current_plan, result, latest_result)

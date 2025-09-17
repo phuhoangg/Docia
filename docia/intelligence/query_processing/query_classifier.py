@@ -58,6 +58,10 @@ class QueryClassifier:
                 temperature=0.1
             )
 
+            if response is None:
+                logger.error("Query classifier received None from provider")
+                raise QueryClassificationError("Provider returned None for query classification")
+
             # Parse JSON response
             try:
                 result = json.loads(sanitize_llm_json(response))

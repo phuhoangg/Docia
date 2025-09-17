@@ -58,7 +58,12 @@ class OpenRouterProvider(BaseProvider):
                 },
             )
 
-            result = response.choices[0].message.content.strip()
+            content = response.choices[0].message.content
+            if content is None:
+                logger.error("OpenRouter returned None content for text processing")
+                raise ProviderError("OpenRouter returned None content", "openrouter")
+
+            result = content.strip()
             logger.debug(f"OpenRouter text response: {result[:50]}...")
 
             # Track Vision Language Model cost if available
@@ -98,7 +103,12 @@ class OpenRouterProvider(BaseProvider):
                 },
             )
 
-            result = response.choices[0].message.content.strip()
+            content = response.choices[0].message.content
+            if content is None:
+                logger.error("OpenRouter returned None content for multimodal processing")
+                raise ProviderError("OpenRouter returned None content", "openrouter")
+
+            result = content.strip()
             logger.debug(f"OpenRouter multimodal response: {result[:50]}...")
 
             # Track Vision Language Model cost if available
