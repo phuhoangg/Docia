@@ -2,45 +2,79 @@
 
 A powerful command-line interface for intelligent document analysis using Vision Language Models.
 
-## 🚀 Installation
+## 🚀 Quick Start
 
-### From Source
+After installation, start the interactive shell:
+
 ```bash
-git clone https://github.com/phuhoangg/docia.git
-cd docia
-pip install -e .
+docia shell
 ```
 
-### Requirements
-- Python 3.8+
-- API key for OpenAI or OpenRouter
+The shell will start in ADD MODE, where you can add documents by entering file paths or dragging and dropping files.
 
-## 🔧 Configuration
+Once documents are added, the shell automatically switches to QUERY MODE, where you can ask questions directly by typing them.
 
-### Environment Variables
+## 📚 Interactive Shell Usage
+
+### Modes
+
+The interactive shell has two modes:
+
+1. **ADD MODE** - For adding documents
+   - Enter file paths directly or drag and drop files
+   - Example: `C:\Documents\report.pdf`
+
+2. **QUERY MODE** - For asking questions about documents
+   - Type questions directly
+   - Example: `What is the main topic of this document?`
+
+### Commands
+
+Use `/` to see available commands:
+
 ```bash
-# Required: AI Provider API Key
-export OPENAI_API_KEY="your-openai-api-key"
-# or
-export OPENROUTER_API_KEY="your-openrouter-api-key"
-
-# Optional: Configuration
-export DOCA_STORAGE_PATH="./docia_data"
-export DOCA_LOG_LEVEL="INFO"
+/                 - Show command menu
+/add              - Switch to add document mode
+/query            - Switch to query mode
+/list             - List all documents
+/clear            - Clear conversation history
+/exit             - Exit the shell
 ```
 
-### Configuration File
-```bash
-# Show current configuration
-docia config show
+### Adding Documents
 
-# Set configuration values
-docia config set --provider openai
-docia config set --storage-path ./my_documents
-docia config set --max-iterations 5
+In ADD MODE, you can add documents by:
+1. Typing the full path to a PDF or image file
+2. Dragging and dropping files onto the terminal window
+
+Example:
+```
+[ADD] Docia > C:\Users\Documents\financial_report.pdf
 ```
 
-## 📚 Usage
+After adding documents, you'll automatically switch to QUERY MODE.
+
+### Querying Documents
+
+In QUERY MODE, ask questions directly:
+
+Example:
+```
+[QUERY] Docia > What are the key findings in this report?
+```
+
+The shell will analyze your documents and provide intelligent responses.
+
+### Task Tracking
+
+The interactive shell displays real-time task progress:
+- Current tasks are shown at the top of the screen
+- Task status is updated as processing occurs
+- You can ask questions while tasks are running
+
+## 🛠️ Command Line Usage
+
+You can also use Docia with direct commands:
 
 ### Adding Documents
 ```bash
@@ -49,18 +83,12 @@ docia add path/to/document.pdf
 
 # Add with custom name
 docia add path/to/report.pdf --name "Q3 Financial Report"
-
-# Add with custom ID
-docia add path/to/manual.pdf --id "user_manual_2024"
 ```
 
 ### Listing Documents
 ```bash
 # List all documents
 docia list
-
-# Search documents
-docia search "financial report" --limit 5
 ```
 
 ### Querying Documents
@@ -70,39 +98,6 @@ docia query "What were the Q3 revenue figures?"
 
 # Query specific documents
 docia query "What is the authentication process?" -d doc_1 -d doc_2
-
-# Query with different modes
-docia query "Summarize the key findings" --mode comprehensive
-
-# Query with page limit
-docia query "Extract all table data" --max-pages 10
-
-# Conversation mode (follow-up questions)
-docia query "Tell me more about that" --conversation
-```
-
-### Advanced Query Options
-```bash
-# Fast mode (quicker, less comprehensive)
-docia query "What is the main topic?" --mode fast
-
-# Comprehensive mode (more thorough analysis)
-docia query "Analyze all financial data" --mode comprehensive
-
-# Limit analysis to specific pages
-docia query "What are the key metrics?" --max-pages 5
-```
-
-### Document Management
-```bash
-# Remove a document
-docia remove doc_123
-
-# Clear conversation history
-docia clear
-
-# Show system statistics
-docia stats
 ```
 
 ## 📊 Progress Tracking
@@ -138,54 +133,13 @@ Based on the analysis of Q3 financial data and growth charts...
    Cost: $0.0234
 ```
 
-## 🗂️ File Structure
-
-After running Docia, your data will be organized as:
-
-```
-docia_data/
-├── documents/
-│   ├── doc_123/
-│   │   ├── metadata.json
-│   │   ├── pages/
-│   │   │   ├── page_1.jpg
-│   │   │   ├── page_2.jpg
-│   │   │   └── ...
-│   │   ├── summary.txt
-│   │   └── thumbnail.jpg
-│   └── doc_456/
-│       └── ...
-├── conversations/
-└── logs/
-```
-
 ## 💡 Tips
 
-### 1. **Optimize Queries**
-- Be specific about what you want to find
-- Use conversation mode for follow-up questions
-- Limit page count for faster results
-
-### 2. **Document Management**
-- Use descriptive names when adding documents
-- Regularly clean up unused documents
-- Monitor storage usage with `docia stats`
-
-### 3. **Cost Management**
-- Use `--mode fast` for simple queries
-- Set `--max-pages` to limit analysis scope
-- Monitor costs in query results
-
-### 4. **Batch Operations**
-```bash
-# Add multiple documents
-for file in reports/*.pdf; do
-    docia add "$file"
-done
-
-# Query multiple documents
-docia query "Compare performance across all documents"
-```
+1. **Start with the interactive shell** - It's the easiest way to use Docia
+2. **Add documents first** - Most queries need documents to analyze
+3. **Ask specific questions** - The more specific your question, the better the results
+4. **Monitor task progress** - Watch the task display to see what Docia is working on
+5. **Use conversation mode** - Ask follow-up questions for deeper insights
 
 ## 🐛 Troubleshooting
 
@@ -211,65 +165,3 @@ file your-document.pdf
 # Limit analysis scope
 docia query "Your question" --max-pages 3 --mode fast
 ```
-
-**Configuration Issues**
-```bash
-# Reset to defaults
-rm ~/.docia/config.json
-docia config set --provider openai
-```
-
-## 📈 Examples
-
-### Financial Analysis
-```bash
-docia add financial_report.pdf
-docia query "What were the Q3 revenue and profit margins?"
-docia query "How does this compare to previous quarters?" --conversation
-```
-
-### Technical Documentation
-```bash
-docia add api_documentation.pdf
-docia query "How do I implement user authentication?"
-docia query "What are the security requirements?" --conversation
-```
-
-### Research Analysis
-```bash
-docia add research_paper.pdf
-docia query "What are the main findings of this study?"
-docia query "What methodology was used?" --conversation
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🚀 Features
-
-- ✅ **Vision Intelligence**: Analyze documents as images
-- ✅ **Adaptive Planning**: Dynamic task planning and execution
-- ✅ **Multiple Formats**: Support for PDFs and images
-- ✅ **Conversation Mode**: Context-aware follow-up questions
-- ✅ **Progress Tracking**: Real-time analysis progress
-- ✅ **Cost Monitoring**: Track API usage and costs
-- ✅ **Configuration Management**: Flexible configuration options
-- ✅ **Batch Operations**: Process multiple documents efficiently
-
-## 🔮 Roadmap
-
-- [ ] Web interface
-- [ ] Document batch processing
-- [ ] Advanced export formats
-- [ ] Plugin system
-- [ ] Team collaboration features
-- [ ] Advanced analytics dashboard

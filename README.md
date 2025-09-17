@@ -53,12 +53,24 @@ The CLI will automatically load the `.env` file from:
 # Start Docia in interactive mode (default)
 docia
 
-# In interactive mode:
-docia[14:30:25]> help
-docia[14:30:26]> "What are the key findings in this report?"
-docia[14:30:27]> tasks
-docia[14:30:28]> exit
+# The interactive shell will start in ADD MODE
+# You can add documents by entering file paths or dragging files
+# After adding documents, you'll automatically switch to QUERY MODE
+# In QUERY MODE, you can ask questions directly by typing them
+
+# Example workflow in interactive mode:
+# [ADD] Docia > C:\\Documents\\report.pdf
+# [QUERY] Docia > What is this document about?
 ```
+
+### Interactive Shell Features
+
+The interactive shell provides:
+- **Two intuitive modes**: ADD MODE for adding documents, QUERY MODE for asking questions
+- **Direct input**: No need for command prefixes - just type file paths or questions
+- **Real-time task tracking**: See what Docia is working on
+- **Built-in commands**: Use `/` to see available commands
+- **Automatic mode switching**: Seamlessly transitions between adding and querying
 
 ### Basic Commands
 
@@ -89,16 +101,6 @@ docia remove doc_123
 
 # Start interactive shell explicitly
 docia shell
-```
-
-### Interactive Mode Features
-
-The interactive shell provides:
-- Real-time task tracking from the planner
-- Conversation history management
-- Live progress updates
-- Timestamped prompts
-- Built-in commands for system management
 ```
 
 ### Advanced Query Options
