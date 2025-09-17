@@ -75,10 +75,10 @@ def query(ctx, query, document, mode, max_pages, conversation):
 
         # Display metadata
         click.echo("INFO: Query Information:")
-        click.echo(f"   Processing time: {result.processing_time_seconds:.2f} seconds")
-        click.echo(f"   Pages analyzed: {result.get_total_pages_analyzed()}")
-        click.echo(f"   Tasks completed: {len(result.task_results)}")
-        click.echo(f"   Total iterations: {result.total_iterations}")
+        click.echo(f"   Processing time: {result.processing_time:.2f} seconds")
+        click.echo(f"   Pages analyzed: {result.page_count}")
+        click.echo(f"   Tasks completed: {result.metadata.get('tasks_completed', 0)}")
+        click.echo(f"   Total iterations: {result.metadata.get('agent_iterations', 0)}")
 
         if result.total_cost > 0:
             click.echo(f"   Cost: ${result.total_cost:.4f}")

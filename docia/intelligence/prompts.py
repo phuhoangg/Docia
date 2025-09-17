@@ -512,4 +512,4 @@ Query: "Summarize the main findings"
 QUERY: {query}
 ----------------
 
-Note: Do not add ```json to your response under any circumstances. Analyze and output only valid JSON."""
+Note: Do not add ```json to your response under any circumstances. Analyze and output only valid JSON. ONLY JSON"""

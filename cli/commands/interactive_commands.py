@@ -193,9 +193,9 @@ class InteractiveShell:
 
             # Display metadata
             click.echo("Information:")
-            click.echo(f"   Time: {result.processing_time_seconds:.2f}s")
-            click.echo(f"   Pages: {result.get_total_pages_analyzed()}")
-            click.echo(f"   Tasks: {len(result.task_results)}")
+            click.echo(f"   Time: {result.processing_time:.2f}s")
+            click.echo(f"   Pages: {result.page_count}")
+            click.echo(f"   Tasks: {result.metadata.get('tasks_completed', 0)}")
 
             # Update conversation history
             self.conversation_history.append(
@@ -352,9 +352,9 @@ class InteractiveShell:
 
             # Display metadata
             click.echo("Information:")
-            click.echo(f"   Time: {result.processing_time_seconds:.2f}s")
-            click.echo(f"   Pages: {result.get_total_pages_analyzed()}")
-            click.echo(f"   Tasks: {len(result.task_results)}")
+            click.echo(f"   Time: {result.processing_time:.2f}s")
+            click.echo(f"   Pages: {result.page_count}")
+            click.echo(f"   Tasks: {result.metadata.get('tasks_completed', 0)}")
 
             # Update conversation history if in conversation mode
             if conversation:
