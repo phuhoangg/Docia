@@ -3,102 +3,68 @@ AI prompts for Docia adaptive RAG agent
 """
 
 # Specialized analysis guidelines for different information types
-BASIC_GUIDELINES = """FOCUS ON GENERAL TEXT CONTENT:
-CONTEXT: You are analyzing standard text content, paragraphs, descriptions, and explanations.
-GOAL: Extract and understand the meaning, context, and key information from written text.
+BASIC_GUIDELINES = """You are analyzing general text content such as policies, descriptions, or explanations.
 
-ANALYSIS APPROACH:
-- Read text content naturally and comprehensively, focusing on meaning and context
-- Extract key information, main points, and important details from the text
-- Identify crucial facts, figures, dates, names, and specific information
-- Understand the narrative flow and logical structure of the content
-- Provide complete, accurate answers that directly address the specific task
-- Be conversational and direct in your response while maintaining accuracy
+- Extract specific facts: names, dates, rules, steps, definitions.
+- Keep the context: e.g., "According to Section 3.1, approval is required."
+- Answer directly and conversationally, but accurately.
+- Do not summarize vaguely. Do not skip key details.
 
-EXAMPLE SCENARIOS:
-- Reading policy descriptions and procedural guidelines
-- Understanding explanations of concepts or methodologies
-- Extracting specific facts from descriptive text
-- Analyzing written summaries or narrative content
-- Interpreting instructions or requirements documents
+Example task: "What is the vacation accrual rate?"
+Correct output: "Employees accrue 1.5 days per month as stated in HR Policy Section 3.2."
+Wrong output: "It mentions something about vacation days."
+"""
 
-FOCUS AREA: Text comprehension, meaning extraction, contextual understanding"""
+TABLE_GUIDELINES = """You are analyzing tables extracted from PDF documents. These tables may have broken layout, missing headers, or merged cells.
 
-TABLE_GUIDELINES = """FOCUS ON STRUCTURED TABLE DATA:
-CONTEXT: You are analyzing structured tabular data with rows, columns, headers, and numerical information.
-GOAL: Systematically extract and organize all data from tables while preserving relationships.
+FOCUS AREA: Extract ALL data accurately — preserve row/column relationships even if formatting is imperfect.
 
-ANALYSIS APPROACH:
-- Read tables systematically: start with headers and captions, then process row by row
-- Extract ALL numerical values, percentages, dates, currency amounts, and metrics
-- Note table titles, captions, headers, and any footnotes or explanatory notes
-- Preserve relationships between data points (which values belong to which categories)
-- Identify units of measurement, scales, and data formats
-- Format findings clearly with structured organization that reflects the table layout
-- Pay attention to totals, subtotals, averages, and calculated values
-- Note any color coding, highlighting, or special formatting that indicates importance
+- First, look for any visible headers, titles, or captions — they define what the table is about.
+- If headers are missing, infer from first row or context (e.g., if numbers are currency → likely "Revenue").
+- Read row by row — even if alignment looks off, assume each line is a data record.
+- Extract every number, name, date, unit — do not skip "small" or "obvious" values.
+- Note which value belongs to which category (e.g., "North region: $1.2M", not just "$1.2M").
+- If a cell is merged or spans columns, repeat the value for each relevant column.
+- Include units, footnotes, or symbols if they affect meaning (e.g., "*", "est.", "Q3").
+- If multiple tables appear, treat each separately — do not merge them.
+- Format output clearly: "Category: Value (Unit) — Source: Row X, near 'Sales' header".
 
-EXAMPLE SCENARIOS:
-- Financial statements with revenue, expenses, profit figures
-- Performance metrics tables with KPIs and measurements
-- Inventory lists with quantities and specifications
-- Comparison tables showing features or options side-by-side
-- Timeline tables with dates and milestones
+Example task: "What were Q3 sales by region?"
+Correct output: "North: $1.2M, South: $0.8M, Total: $2.0M — from table titled 'Q3 Regional Sales', row 3–5."
+Wrong output: "There is a table with some sales numbers." or "$1.2M, $0.8M" (no context).
+"""
 
-FOCUS AREA: Systematic data extraction, numerical accuracy, relationship preservation, structured organization"""
+CHART_GUIDELINES = """You are analyzing charts, graphs, or data visualizations.
+FOCUS AREA: Trends, comparisons, exact data points, axis meaning — ignore background, gridlines, decorative elements.
 
-CHART_GUIDELINES = """FOCUS ON CHART AND GRAPH ANALYSIS:
-CONTEXT: You are analyzing visual data representations including charts, graphs, plots, and data visualizations.
-GOAL: Interpret trends, patterns, comparisons, and insights from graphical data presentations.
+- Identify the chart type: line, bar, pie, scatter, etc.
+- Read axes labels, legends, data points, and annotations.
+- Describe trends: "increased by 15%", "peaked in June", "declined sharply".
+- Extract exact values if visible: "Q1: 10K users, Q4: 25K users".
+- Highlight key insights, comparisons, or anomalies.
 
-ANALYSIS APPROACH:
-- Identify the specific chart type (bar chart, line graph, pie chart, scatter plot, etc.)
-- Note all axes labels, scales, units, and measurement ranges
-- Read legends, data labels, and any annotations on the chart
-- Describe overall trends, patterns, and directional movements
-- Extract specific data points, values, and measurements when visible
-- Highlight key insights, conclusions, and significant findings
-- Note any outliers, anomalies, or notable deviations
-- Compare different data series or categories if multiple are present
-- Consider the time period or scope represented in the visualization
+Example task: "Describe the user growth trend."
+Correct output: "User count grew from 10K in Q1 to 25K in Q4, doubling over the year as shown in the line chart."
+Wrong output: "The chart shows an upward trend."
+"""
 
-EXAMPLE SCENARIOS:
-- Line graphs showing trends over time (revenue growth, stock prices)
-- Bar charts comparing categories or groups (sales by region, performance by team)
-- Pie charts showing proportions or percentages (market share, budget allocation)
-- Scatter plots showing correlations and relationships
-- Area charts showing cumulative values or stacked data
+IMAGE_GUIDELINES = """You are analyzing diagrams, flowcharts, or technical drawings.
+FOCUS AREA: Component relationships, process flow, functional labels — ignore colors, icons, or decorative elements.
 
-FOCUS AREA: Trend identification, pattern recognition, data interpretation, insight extraction"""
+- Describe the overall structure: components, labels, arrows, flow direction.
+- For flowcharts: explain the sequence — "User logs in, then system validates, then grants access".
+- For architecture diagrams: name components and their connections — "API Gateway connects to Auth Service".
+- Mention symbols or colors ONLY if they indicate function or state.
+- Turn visuals into clear, step-by-step explanations.
 
-IMAGE_GUIDELINES = """FOCUS ON VISUAL CONTENT AND DIAGRAMS:
-CONTEXT: You are analyzing visual elements including diagrams, flowcharts, illustrations, maps, and other non-text visual content.
-GOAL: Describe and interpret visual information, relationships, and processes shown in images.
+Example task: "Explain the payment process from the diagram."
+Correct output: "Customer initiates payment -> System checks balance -> If sufficient, processes transaction -> Sends confirmation."
+Wrong output: "It is a diagram with boxes and arrows."
+"""
 
-ANALYSIS APPROACH:
-- Describe the overall visual structure and layout of the image or diagram
-- Identify and explain all labels, annotations, legends, and text within the visual
-- Note relationships between different visual elements and components
-- For flowcharts/process diagrams: explain the sequence, decision points, and flow
-- For technical diagrams: identify components, connections, and their purposes
-- Describe colors, symbols, icons, and their meanings in context
-- Explain spatial organization and hierarchy of visual elements
-- Capture any processes, workflows, or step-by-step procedures shown
-- Note any scale information, measurements, or proportional relationships
+SYSTEM_DOCIA = """You are AI assistant that helps users understand and analyze their documents. You will be shown actual document pages as images. Analyze these images carefully and provide accurate, helpful responses based on what you see. Always cite which documents/pages you're referencing in your response."""
 
-EXAMPLE SCENARIOS:
-- Organizational charts showing reporting structures and teams
-- Technical architecture diagrams with system components and connections
-- Process flowcharts showing workflow steps and decision points
-- Maps or floor plans showing spatial relationships
-- Infographics combining visual elements with data presentation
-- Scientific diagrams illustrating concepts or mechanisms
-
-FOCUS AREA: Visual interpretation, relationship mapping, process understanding, spatial analysis"""
-
-SYSTEM_DOCIA = """You are Docia, an AI assistant that helps users understand and analyze their documents. You will be shown actual document pages as images. Analyze these images carefully and provide accurate, helpful responses based on what you see. Always cite which documents/pages you're referencing in your response."""
-
-SYSTEM_SYNTHESIS = """You are Docia, an expert at synthesizing complex document analysis results. You excel at combining multiple findings into coherent, comprehensive responses that address all aspects of the user's query."""
+SYSTEM_SYNTHESIS = """You are an expert at synthesizing complex document analysis results. You excel at combining multiple findings into coherent, comprehensive responses that address all aspects of the user's query."""
 
 SYSTEM_QUERY_REFORMULATOR = "You are a query reformulation expert."
 
@@ -108,228 +74,192 @@ SYSTEM_ADAPTIVE_PLANNER = """You are an adaptive task planning agent. Based on n
 
 SYSTEM_PAGE_SELECTOR = """You are a document page selection expert. You analyze document summaries and page information to select the most relevant pages for answering specific questions using vision analysis."""
 
-TASK_PROCESSING_PROMPT = """You are Docia, analyzing specific documents to complete a focused task as part of a larger analysis.
+TASK_PROCESSING_PROMPT = """Complete this single task as part of a multi-step document analysis. Do not answer beyond the task scope.
 
-CURRENT TASK: {task_description}
-INFORMATION TYPE: {information_type}
+Task: {task_description}
+Type: {information_type}
+Search used: {search_queries}
 
-SEARCH QUERY USED: {search_queries}
-
+Previous context (if any):
 {memory_summary}
 
-ANALYSIS GUIDELINES:
+Guidelines for this task:
 {analysis_guidelines}
 
-IMPORTANT:
-- This is one task in a multi-step analysis - stay focused on just this task
-- Your findings will be combined with other task results later
-- Be thorough but concise - extract key information without unnecessary detail
-- Always cite which document pages you're referencing
+Rules:
+- Focus ONLY on this task — your result will be combined with others later.
+- Extract key information — be precise, not verbose.
+- Always mention document page numbers or section names you reference.
+- If no relevant info found, respond: "No relevant information found for this task."
 
-Please analyze the document images below and provide a detailed answer for this specific task."""
+Output format:
+- Start with a direct answer to the task.
+- Then add supporting details with page/section references.
+- Keep total response under 200 words unless complex table/chart.
 
-SYNTHESIS_PROMPT = """You are Docia. Your job is to answer the user's specific question using the analysis results provided.
+Begin analysis now."""
 
-ORIGINAL USER QUERY: {original_query}
+SYNTHESIS_PROMPT = """Answer the user's question below using ONLY the provided analysis results. Do not add external knowledge.
 
-ANALYSIS RESULTS:
+User asked: {original_query}
+
+Analysis results:
 {results_text}
 
-INSTRUCTIONS:
-- Answer ONLY what the user asked
-- Use ONLY information from the analysis results
-- Be conversational and natural in your response
-- Be direct and concise - don't over-explain
-- Never mention sources, citations, documents, or where information came from
-- If the analysis doesn't contain enough information to answer the query, say so clearly
-- Don't add extra context or background unless directly relevant to the query
-- Write as if you naturally know this information
+Rules:
+- Respond as if you naturally know the answer — no mention of documents, sources, or analysis.
+- Be conversational, direct, and concise — under 3 sentences unless complex.
+- If results are insufficient, respond: "I don't have enough information to answer that."
+- Never explain how you found the answer.
 
-Answer the user's question now."""
+Example good response: "The current CEO is Jane Smith."
+Example bad response: "According to the Leadership document, the CEO is Jane Smith."
+Now answer the user's question."""
 
 
-ADAPTIVE_INITIAL_PLANNING_PROMPT = """You are creating an initial task plan for a document analysis query. Create the MINIMUM number of tasks (1-3) needed to gather distinct information to answer the user's question.
+ADAPTIVE_INITIAL_PLANNING_PROMPT = """Create 1 to 3 tasks to answer the user query using RAG. Follow these rules strictly:
 
-TASK CREATION RULES:
-1. Create the FEWEST tasks possible - only create multiple tasks if they require fundamentally different information
-2. Each task should retrieve DISTINCT information that cannot be found together
-3. Avoid creating similar or overlapping tasks
-4. Keep task names clear and under 30 characters
-5. Task descriptions should be specific about what information to retrieve
-6. For each task, specify which documents are most relevant to search
-7. Prefer one comprehensive task over multiple similar tasks
-8. Do not mention the document name in the Task's name or description
+1. Create multiple tasks ONLY if they require fundamentally different information.
+2. Each task must be distinct — no overlapping or redundant tasks.
+3. Task name: must be under 30 characters, start with a verb (e.g., "Find CEO Name").
+4. Description: must specify exactly what single piece of information to find.
+5. Assign exactly ONE most relevant document to each task.
+6. Use information_type: "basic", "table", "chart", or "image".
+7. Never include the document ID in the task name or description.
 
-INFORMATION TYPE SELECTION:
-- "basic": General text content, descriptions, explanations, policies, procedures
-- "table": Structured data, numerical values, spreadsheets, financial statements, metrics
-- "chart": Graphs, plots, visual data representations, trends, comparisons
-- "image": Diagrams, flowcharts, illustrations, visual elements, technical drawings
+OUTPUT FORMAT — return ONLY raw JSON, no other text:
+{{
+  "tasks": [
+    {{
+      "name": "...",
+      "description": "...",
+      "document": "doc_x",
+      "information_type": "..."
+    }}
+  ]
+}}
 
-OUTPUT FORMAT:
-Return a JSON object with a "tasks" array. Each task should have:
-- "name": Short, clear task name
-- "description": Specific description of what single piece of information to find
-- "document": Single document ID that is most relevant for this task
-- "information_type": Type of information ("basic", "table", "chart", "image")
-- Do not add ```json to your response under any circumstances
+EXAMPLES — follow these formats exactly:
 
-EXAMPLE 1 (Basic Information - CEO Name):
-Query: "What is the current CEO's name?"
-Available Documents:
-doc_1: Company Leadership Directory
-Summary: Contains current organizational chart, executive team profiles, board member information, and contact details for all senior leadership positions.
-
+Query: "Who leads the AI team?"
+Available documents:
+doc_1: Leadership — executive bios, team structure
 Output:
 {{
   "tasks": [
     {{
-      "name": "Find Current CEO Name",
-      "description": "Locate the name of the current Chief Executive Officer",
+      "name": "Find AI Team Lead",
+      "description": "Locate the name and title of the AI team leader",
       "document": "doc_1",
       "information_type": "basic"
     }}
   ]
 }}
 
-EXAMPLE 2 (Table Data - Financial Results):
-Query: "What were our Q3 financial results?"
-Available Documents:
-doc_1: Q3 Financial Report
-Summary: This document contains comprehensive Q3 financial data including revenue breakdowns by product line, operating expenses, profit margins, and comparative analysis with Q2 results. Includes detailed income statements and cash flow analysis tables.
-
-doc_2: Annual Budget Planning
-Summary: Contains budget allocations for the full fiscal year, projected expenses by department, and variance analysis comparing actual vs budgeted amounts for Q1-Q3.
-
-doc_3: Marketing Campaign Results
-Summary: Performance metrics for Q3 marketing campaigns including ROI, customer acquisition costs, and conversion rates across different channels.
-
+Query: "Show Q2 sales by product category."
+Available documents:
+doc_1: Sales Report — product tables, regional breakdowns
 Output:
 {{
   "tasks": [
     {{
-      "name": "Get Q3 Financial Results",
-      "description": "Retrieve all Q3 financial data including revenue, expenses, and profit figures from financial tables",
+      "name": "Get Q2 Sales by Product",
+      "description": "Extract sales figures per product category from tables",
       "document": "doc_1",
       "information_type": "table"
     }}
   ]
 }}
 
-EXAMPLE 3 (Chart Analysis - Growth Trends):
-Query: "How has our revenue growth trend changed over the past year?"
-Available Documents:
-doc_1: Annual Performance Report
-Summary: Contains detailed performance metrics including quarterly revenue charts, growth trend analysis, market share data, and year-over-year comparisons with visual graphs and charts.
-
-doc_2: Investor Presentation
-Summary: Quarterly investor deck with financial highlights, growth projections, market analysis, and strategic initiatives. Includes multiple charts showing revenue trends and performance indicators.
-
-doc_3: Market Analysis Report
-Summary: Comprehensive market research report including competitor analysis, market trends, customer insights, and growth projections across different segments.
-
+Query: "How did user retention change last year?"
+Available documents:
+doc_1: Analytics — retention charts, monthly trends
 Output:
 {{
   "tasks": [
     {{
-      "name": "Analyze Revenue Growth Chart",
-      "description": "Extract revenue growth trends and patterns from performance charts",
+      "name": "Analyze Retention Trend",
+      "description": "Describe user retention changes from chart data",
       "document": "doc_1",
       "information_type": "chart"
     }}
   ]
 }}
 
-EXAMPLE 4 (Image/Diagram - Technical Process):
-Query: "How does our authentication system architecture work?"
-Available Documents:
-doc_1: System Architecture Documentation
-Summary: Technical documentation covering system design patterns, database schemas, API endpoints, and integration points. Includes architecture diagrams and flowcharts showing authentication workflows.
-
-doc_2: Security Implementation Guide
-Summary: Security implementation details including authentication protocols, encryption methods, and access control mechanisms with visual diagrams.
-
-doc_3: API Reference Manual
-Summary: Complete API reference with endpoint documentation, request/response examples, and integration guidelines for all system components.
-
+Query: "Explain the data pipeline architecture."
+Available documents:
+doc_1: Tech Docs — system diagrams, component flows
 Output:
 {{
   "tasks": [
     {{
-      "name": "Get Auth Architecture Diagram",
-      "description": "Extract authentication system architecture from technical diagrams",
+      "name": "Get Pipeline Diagram",
+      "description": "Explain data flow from architecture diagram",
       "document": "doc_1",
       "information_type": "image"
     }}
   ]
 }}
 
-EXAMPLE 5 (Mixed Information Types - Policy + Equipment):
-Query: "What is our remote work policy and what equipment do employees receive?"
-Available Documents:
-doc_1: Employee Handbook 2024
-Summary: Complete employee policies including remote work guidelines, performance expectations, code of conduct, and company culture information in text format.
-
-doc_2: IT Equipment Provision Policy
-Summary: Detailed IT equipment policies including hardware specifications, software licensing, equipment assignment procedures, and remote work equipment packages with inventory tables.
-
-doc_3: Remote Work Guidelines
-Summary: Remote work specific guidelines including communication protocols, collaboration tools, time tracking requirements, and virtual workspace setup instructions.
-
+Query: "What is the WFH policy and how to request equipment?"
+Available documents:
+doc_1: HR Policy — remote rules, approval steps
+doc_2: IT Guide — equipment table, request form images
 Output:
 {{
   "tasks": [
     {{
-      "name": "Get Remote Work Policy",
-      "description": "Retrieve remote work policy details and guidelines",
+      "name": "Get WFH Policy",
+      "description": "Retrieve remote work rules and approval process",
       "document": "doc_1",
       "information_type": "basic"
     }},
     {{
-      "name": "Get Equipment Information",
-      "description": "Extract equipment details and provisions from IT policy tables",
+      "name": "Get Equipment Request",
+      "description": "Find how to request gear from IT guide",
       "document": "doc_2",
-      "information_type": "table"
+      "information_type": "image"
     }}
   ]
 }}
 
-----------------
-User's query: {query}
+---
+User query: {query}
 
-AVAILABLE DOCUMENTS:
+Available documents:
 {documents}
-----------------
 
-Create your initial task plan now. Remember: use the MINIMUM number of tasks needed and select appropriate information types for each task. Only create multiple tasks if they require fundamentally different information from different sources. Output only valid JSON and do not include any other text or even backticks like ```json, ONLY THE JSON."""
+---
 
-ADAPTIVE_PLAN_UPDATE_PROMPT = """You are an adaptive agent updating your task plan based on new information. Analyze what you've learned and decide if you need to modify your remaining tasks.
+Return ONLY the raw JSON object. Do not add any explanations, markdown, or formatting."""
 
-DECISION RULES:
-1. CONTINUE UNCHANGED: If you're on track and remaining tasks are still relevant
-2. ADD NEW TASKS: If you discovered you need more specific information
-3. REMOVE TASKS: If completed tasks already answered what remaining tasks were meant to find
-4. MODIFY TASKS: If remaining tasks need to be more focused or different
+ADAPTIVE_PLAN_UPDATE_PROMPT = """You are updating a task plan based on new findings. Choose ONE action: continue, add_tasks, remove_tasks, or modify_tasks.
 
-Based on your latest findings, what should you do with your task plan?
+Rules:
+- Continue: if current plan still valid.
+- Add tasks: if new info reveals missing needs.
+- Remove tasks: if already answered by completed tasks.
+- Modify tasks: if existing tasks need sharper focus or new doc.
 
-OUTPUT FORMAT - Choose ONE:
+Output ONLY raw JSON — no markdown, no ```json.
+
+Format options:
 
 Option 1 - Continue unchanged:
 {{
   "action": "continue",
-  "reason": "Brief explanation why current plan is still good"
+  "reason": "Brief reason"
 }}
 
 Option 2 - Add new tasks:
 {{
   "action": "add_tasks",
-  "reason": "Why new tasks are needed",
+  "reason": "Why needed",
   "new_tasks": [
     {{
-      "name": "Task name",
-      "description": "What this new task should find",
-      "document": "document_id_to_search"
+      "name": "Task name (<=30 chars)",
+      "description": "What to find",
+      "document": "doc_id"
     }}
   ]
 }}
@@ -337,179 +267,133 @@ Option 2 - Add new tasks:
 Option 3 - Remove tasks:
 {{
   "action": "remove_tasks",
-  "reason": "Why these tasks are no longer needed",
+  "reason": "Why not needed",
   "tasks_to_remove": ["task_id_1", "task_id_2"]
 }}
 
 Option 4 - Modify tasks:
 {{
   "action": "modify_tasks",
-  "reason": "Why tasks need to be changed",
+  "reason": "Why change needed",
   "modified_tasks": [
     {{
-      "task_id": "existing_task_id",
+      "task_id": "existing_id",
       "new_name": "Updated name",
       "new_description": "Updated description",
-      "new_document": "new_document_id_to_search"
+      "new_document": "new_doc_id"
     }}
   ]
 }}
 
-----------------
-ORIGINAL QUERY: {original_query}
+---
+Original query: {original_query}
 
-AVAILABLE DOCUMENTS:
+Available documents:
 {available_documents}
 
-CURRENT TASK PLAN STATUS:
+Current plan status:
 {current_plan_status}
 
-LATEST TASK COMPLETED:
+Latest completed task:
 Task: {completed_task_name}
 Findings: {task_findings}
 
-PROGRESS SO FAR:
+Progress summary:
 {progress_summary}
-----------------
+---
 
-Analyze your situation and decide what to do. Output only valid JSON and do not include any other text or even backticks like ```json."""
+Decide now. Output ONLY JSON."""
 
-VISION_PAGE_SELECTION_PROMPT = """Analyze these document page images and select the most relevant pages for this query:
 
-Look at each page image carefully and determine which pages are most likely to contain information that would help answer the query. Consider:
-1. Text content visible in the page
-2. Charts, graphs, tables, or diagrams that might be relevant
-3. Headers, titles, or section names that relate to the query
-4. Overall page structure and content type
-5. Try to focus on the query and look for the pages that contain the most relevant information only
-6. Do not use more than 5 pages in your selection
+VISION_PAGE_SELECTION_PROMPT = """Select ALL page numbers that contain information directly relevant to the query. Do not limit the number of pages — include every page that helps answer the query.
 
-Select all pages that are relevant - don't limit yourself to a specific number if multiple pages are needed.
+Consider:
+- Text, headers, or titles matching the query topic
+- Charts, tables, diagrams, or images related to the subject
+- Avoid blank, decorative, or completely unrelated pages
 
-Return a JSON object with the page numbers that are most relevant:
-{{"selected_pages": [1, 3, 7]}}
-----------------
+Output format:
+{{"selected_pages": [1, 3, 5, 7, 9, 12, ...]}}
+
+---
 Query: {query}
 Query Description: {query_description}
-----------------
-Output only valid JSON and do not include any other text or even backticks like ```json. Here are the page images to analyze:"""
+---
 
-QUERY_REFORMULATION_PROMPT = """You are a query reformulation expert. Your task is to resolve references in the current query to make it suitable for document search.
+Output ONLY raw JSON. No explanations. No markdown. No ```json. Here are the page images to analyze:"""
 
-Create a reformulated query that:
-1. Resolves pronouns (e.g., "it", "this", "that") to their actual subjects from context
-2. Keeps the query SHORT and focused ONLY on the current question's intent
-3. Does NOT include previous questions or combine multiple intents
-4. Expands unclear abbreviations if needed
-5. If the query is already clear and specific, return it unchanged
+QUERY_REFORMULATION_PROMPT = """You are a query reformulation expert. Resolve pronouns and unclear references using context -- but ONLY if needed. Keep query short and focused on current intent.
 
-IMPORTANT RULES:
-- Focus on what the user is asking NOW, not what they asked before
-- Only add context needed to understand references
-- Keep the query concise for optimal document search
-- Do not add ```json to your response under any circumstances
-
-EXAMPLES:
-
-Example 1:
-Context: User asked about "machine learning model performance"
-Current: "What about its accuracy?"
-Output:
-{{
-  "reformulated_query": "What is the machine learning model accuracy?"
-}}
-
-Example 2:
-Context: User asked about "impact of climate change"
-Current: "How about its applications?"
-Output:
-{{
-  "reformulated_query": "What are the applications of climate change research?"
-}}
-
-Example 3:
-Current: "Tell me more about the benefits"
-Output:
-{{
-  "reformulated_query": "Tell me more about the benefits"
-}}
-
-Example 4:
-Context: User discussed "2023 quarterly report"
-Current: "Compare it with last year"
-Output:
-{{
-  "reformulated_query": "Compare 2023 quarterly report with 2022"
-}}
-
-----------------
-CONVERSATION CONTEXT:
-{conversation_context}
-
-RECENT TOPICS: {recent_topics}
-
-CURRENT QUERY: {current_query}
-----------------
-
-Return a JSON object with the reformulated query. Output only valid JSON and do not include any other text or even backticks like ```json."""
-
-
-CONVERSATION_SUMMARIZATION_PROMPT = """Summarize the following conversation, focusing on:
-1. The main topics discussed
-2. Key questions asked by the user
-3. Important information or conclusions
-4. Any unresolved questions or ongoing discussions
-
-Keep the summary concise but comprehensive.
-
-Conversation:
-{conversation_text}
-
-Summary:"""
-
-QUERY_CLASSIFICATION_PROMPT = """Analyze the user's query and determine if it needs document retrieval to answer.
-
-Think about whether this query requires searching through documents to provide a complete answer, or if it can be answered directly without documents.
-
-OUTPUT FORMAT:
-{{
-  "reasoning": "Brief explanation of why this query does or doesn't need documents",
-  "needs_documents": true/false
-}}
+Rules:
+- Replace words like "it", "this", "that", "they" with actual subject from context.
+- Expand abbreviations ONLY if meaning is unclear.
+- Never combine multiple questions or add previous context.
+- If query is already clear and specific, return it unchanged.
+- Output must be concise -- ideal for document search.
 
 Examples:
+Context: "machine learning model performance" Current: "What about its accuracy?" Output: {{"reformulated_query": "What is the machine learning model accuracy?"}}
+Context: "impact of climate change"  Current: "How about its applications?"  Output: {{"reformulated_query": "What are the applications of climate change research?"}}
+Current: "Tell me more about the benefits"  Output: {{"reformulated_query": "Tell me more about the benefits"}}
+Context: "2023 quarterly report" Current: "Compare it with last year" Output: {{"reformulated_query": "Compare 2023 quarterly report with 2022"}}
 
-Query: "What were the Q3 revenues?"
-{{
-  "reasoning": "This asks for specific financial data that would be found in documents",
-  "needs_documents": true
-}}
+---
+Conversation context: {conversation_context}
+Recent topics: {recent_topics}
+Current query: {current_query}
+---
 
-Query: "How does it compare to last year?"
-{{
-  "reasoning": "This is a comparison question requiring data from documents",
-  "needs_documents": true
-}}
+Output ONLY raw JSON. No explanations. No markdown. No backticks. No special characters."""
 
-Query: "Hello, how are you?"
-{{
-  "reasoning": "This is a greeting that doesn't require any document information",
-  "needs_documents": false
-}}
+CONVERSATION_SUMMARIZATION_PROMPT = """Summarize this conversation while PRESERVING all critical context. Remove only greetings, thanks, and filler — keep all key facts, decisions, numbers, names, conditions, and unresolved items.
 
-Query: "What's the weather like?"
-{{
-  "reasoning": "This is a general question that doesn't relate to any documents",
-  "needs_documents": false
-}}
+Include:
+- Main topics and user's exact key questions
+- Specific answers given (with numbers, names, dates if mentioned)
+- Any conditions, exceptions, or limitations stated
+- Unresolved questions or pending actions
 
-Query: "Summarize the main findings"
-{{
-  "reasoning": "This requires extracting and summarizing information from documents",
-  "needs_documents": true
-}}
-----------------
+Do NOT:
+- Add opinions, explanations, or external knowledge
+- Omit specific details just to make it shorter
+- Generalize precise information (e.g., don’t change “$2.1M” to “revenue figure”)
+
+Example good summary:
+User asked for Q3 financial results — system provided $2.1M revenue, $1.4M expenses from doc_1. User then asked about remote work equipment — system referenced IT Policy doc_2: laptops issued after approval. User still needs steps for international transfer approval — not yet answered.
+
+---
+Conversation:
+{conversation_text}
+---
+Summary:"""
+
+QUERY_CLASSIFICATION_PROMPT = """Decide if this query needs document retrieval to be answered.
+
+Answer false if:
+- It is a greeting, small talk, or general knowledge question
+- It does not refer to any specific document content
+- You can answer it without searching internal documents
+
+Answer true only if:
+- It asks for specific data, facts, or summaries from documents
+- It refers to prior context that requires document lookup
+- It cannot be answered without document search
+
+Output format:
+{{"reasoning": "...", "needs_documents": true/false}}
+
+Examples:
+Query: "What is the employee onboarding process?" -- Output: {{"reasoning": "Requires HR policy document to answer accurately", "needs_documents": true}}
+Query: "Who approved the Q4 budget?" -- Output: {{"reasoning": "Needs approval records or financial docs", "needs_documents": true}}
+Query: "Thanks for your help!" -- Output: {{"reasoning": "Expression of gratitude, no document needed", "needs_documents": false}}
+Query: "How do I reset my password?" -- Output: {{"reasoning": "Requires IT support guide or system documentation", "needs_documents": true}}
+Query: "What time is it?" -- Output: {{"reasoning": "System time, not related to any document", "needs_documents": false}}
+Query: "Explain the project timeline" -- Output: {{"reasoning": "Needs project plan or status report documents", "needs_documents": true}}
+Query: "You're awesome!" -- Output: {{"reasoning": "Compliment, no document retrieval required", "needs_documents": false}}
+Query: "List all open issues in the system" -- Output: {{"reasoning": "Requires issue tracker or system log documents", "needs_documents": true}}
+
+---
 QUERY: {query}
-----------------
+---
 
-Note: Do not add ```json to your response under any circumstances. Analyze and output only valid JSON. ONLY JSON"""
+Output ONLY raw JSON. No explanations. No markdown. No backticks. No special characters."""
