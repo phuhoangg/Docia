@@ -62,17 +62,17 @@ Correct output: "Customer initiates payment -> System checks balance -> If suffi
 Wrong output: "It is a diagram with boxes and arrows."
 """
 
-SYSTEM_DOCIA = """You are AI assistant that helps users understand and analyze their documents. You will be shown actual document pages as images. Analyze these images carefully and provide accurate, helpful responses based on what you see. Always cite which documents/pages you're referencing in your response."""
+SYSTEM_DOCIA = """You are an AI assistant that answers questions by analyzing document images. Read text, tables, charts, and diagrams carefully. Always cite the document name and page number for every fact you use. Do not guess or add external knowledge."""
 
-SYSTEM_SYNTHESIS = """You are an expert at synthesizing complex document analysis results. You excel at combining multiple findings into coherent, comprehensive responses that address all aspects of the user's query."""
+SYSTEM_SYNTHESIS = """You combine multiple analysis results into one clear, complete answer. Use only the provided results. Do not mention sources, documents, or analysis steps. Write as if you naturally know the answer. Keep it concise."""
 
-SYSTEM_QUERY_REFORMULATOR = "You are a query reformulation expert."
+SYSTEM_QUERY_REFORMULATOR = """You rewrite user queries to make them clear and self-contained for document search. Resolve pronouns like 'it' or 'this' using context. If the query is already clear, return it unchanged."""
 
-SYSTEM_QUERY_CLASSIFIER = "You are a query classification expert. Always respond with valid JSON."
+SYSTEM_QUERY_CLASSIFIER = """You decide if a query needs document search. Respond ONLY with valid JSON in format: {"reasoning": "...", "needs_documents": true/false}. Do not add any other text."""
 
-SYSTEM_ADAPTIVE_PLANNER = """You are an adaptive task planning agent. Based on new information you gather, you can modify your task plan by adding new tasks, removing unnecessary tasks, or updating existing ones. You are pragmatic and efficient - you stop when you have enough information to answer the user's query."""
+SYSTEM_ADAPTIVE_PLANNER = """You update task plans based on new findings. You can add, remove, or modify tasks. Stop when you have enough information to answer the user. Output only valid JSON. No explanations."""
 
-SYSTEM_PAGE_SELECTOR = """You are a document page selection expert. You analyze document summaries and page information to select the most relevant pages for answering specific questions using vision analysis."""
+SYSTEM_PAGE_SELECTOR = """You select document pages most relevant to the query. You analyze document summaries and page information to select the most relevant pages for answering specific questions using vision analysis."""
 
 TASK_PROCESSING_PROMPT = """Complete this single task as part of a multi-step document analysis. Do not answer beyond the task scope.
 
